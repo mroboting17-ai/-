@@ -2,6 +2,7 @@ import json
 import os
 import time
 import urllib.request
+import urllib.error
 from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
 from threading import Thread
 import urllib.parse
@@ -15,10 +16,22 @@ from urllib.parse import urlparse
 TOKEN = os.environ.get("TELEGRAM_BOT_TOKEN")
 API = f"https://api.telegram.org/bot{TOKEN}" if TOKEN else None
 PORT = int(os.environ.get("PORT", "3000"))
-WEB_APP_URL = os.environ.get(
+
+
+def normalize_web_app_url(value):
+    value = value.strip()
+    if "://" not in value:
+        value = f"https://{value}"
+    parsed_url = urlparse(value)
+    if parsed_url.scheme != "https" or not parsed_url.netloc:
+        raise ValueError("WEB_APP_URL должен быть корректным HTTPS-адресом")
+    return value
+
+
+WEB_APP_URL = normalize_web_app_url(os.environ.get(
     "WEB_APP_URL",
     "https://thirty-worlds-go.loca.lt",
-)
+))
 ADMIN_USER_IDS = frozenset({"8414885700", "6627701692", "1987944272"})
 DATA_DIR = Path(os.environ.get(
     "RAILWAY_VOLUME_MOUNT_PATH",
@@ -80,8 +93,18 @@ def telegram(method, payload=None):
         headers={"Content-Type": "application/json"},
         method="POST" if data else "GET",
     )
-    with urllib.request.urlopen(request, timeout=35) as response:
-        return json.loads(response.read().decode())
+    try:
+        with urllib.request.urlopen(request, timeout=35) as response:
+            return json.loads(response.read().decode())
+    except urllib.error.HTTPError as error:
+        try:
+            response_body = json.loads(error.read().decode())
+            description = response_body.get("description", "неизвестная ошибка")
+        except (json.JSONDecodeError, UnicodeDecodeError):
+            description = "Telegram не принял запрос"
+        raise RuntimeError(
+            f"Telegram API {method}: HTTP {error.code}: {description}"
+        ) from error
 
 
 def send_message(chat_id, text):

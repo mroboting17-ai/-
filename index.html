@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+    <meta name="theme-color" content="#0e1118" />
+    <title>AXE STORE</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <main class="app">
+      <div id="pageRoot"></div>
+      <nav class="bottom-nav" aria-label="Навигация">
+        <button class="active" data-page="catalog">
+          <svg viewBox="0 0 24 24"><path d="M4 11 12 5l8 6v8h-5v-5H9v5H4z" /></svg>
+          <span>Каталог</span>
+        </button>
+        <button data-page="favorites">
+          <svg viewBox="0 0 24 24"><path d="M12 21s-7-4.7-7-10a4 4 0 0 1 7-2.7A4 4 0 0 1 19 11c0 5.3-7 10-7 10z" /></svg>
+          <span>Избранное</span>
+        </button>
+        <button data-page="order">
+          <svg viewBox="0 0 24 24"><path d="M3 4h2l2 10h10l2-7H7M9 20h.01M17 20h.01" /></svg>
+          <span>Под заказ</span>
+        </button>
+        <button data-page="about">
+          <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8" /><path d="M12 8v8M8 12h8" /></svg>
+          <span>О магазине</span>
+        </button>
+      </nav>
+    </main>
+
+    <div class="detail-actions" id="detailActions" aria-hidden="true"></div>
+    <div class="filter-backdrop" id="filterBackdrop"></div>
+    <aside class="filter-panel" id="filterPanel" aria-label="Фильтры">
+      <div class="filter-header">
+        <h2>Фильтры</h2>
+        <button class="filter-close" id="filterClose" aria-label="Закрыть">×</button>
+      </div>
+      <div class="filter-content">
+        <h3>Сортировка</h3>
+        <div class="filter-options" id="sortOptions">
+          <button class="active" data-sort="new">Сначала новые</button>
+          <button data-sort="cheap">Дешевле</button>
+          <button data-sort="expensive">Дороже</button>
+        </div>
+        <h3>Цена, BYN</h3>
+        <div class="price-fields">
+          <label><span>от</span><input id="priceFrom" type="number" inputmode="numeric" /></label>
+          <label><span>до</span><input id="priceTo" type="number" inputmode="numeric" /></label>
+        </div>
+        <div class="filter-actions">
+          <button id="resetFilters">Сбросить</button>
+          <button id="applyFilters">Показать</button>
+        </div>
+      </div>
+    </aside>
+    <div class="admin-backdrop" id="adminBackdrop"></div>
+    <aside class="admin-panel" id="adminPanel" aria-label="Добавление товара">
+      <div class="admin-header">
+        <h2>Новый товар</h2>
+        <button class="admin-close" id="adminClose" aria-label="Закрыть">×</button>
+      </div>
+      <form class="admin-form" id="adminProductForm">
+        <div class="admin-field-grid">
+          <label>Бренд<input name="brand" placeholder="Например, CELINE" required /></label>
+          <label>Название<input name="name" placeholder="Название модели" required /></label>
+          <label>Категория<select name="category" required>
+            <option>Обувь</option>
+            <option>Аксессуары</option>
+            <option>Худи</option>
+            <option>Верхняя одежда</option>
+            <option>Штаны / Шорты</option>
+            <option>Футболки</option>
+          </select></label>
+          <label>Размер<input name="unit" placeholder="S (S-M)" required /></label>
+          <label>Цена, BYN<input name="byn" type="number" min="0.01" step="0.01" placeholder="280" required /></label>
+          <label>Состояние<input name="condition" value="Отличное состояние" required /></label>
+        </div>
+        <div class="price-preview">
+          <span id="bynPreview">0 BYN</span>
+          <span id="usdtPreview">0 USDT</span>
+          <span id="rubPreview">0 ₽</span>
+        </div>
+        <details class="admin-measurements">
+          <summary>Замеры <span>необязательно</span></summary>
+          <div class="admin-field-grid">
+            <label>Длина, см<input name="length" type="number" min="0" step="0.1" /></label>
+            <label>Ширина, см<input name="width" type="number" min="0" step="0.1" /></label>
+            <label>Длина рукава, см<input name="sleeve" type="number" min="0" step="0.1" /></label>
+            <label>Полуобхват талии, см<input name="waist" type="number" min="0" step="0.1" /></label>
+          </div>
+        </details>
+        <div class="admin-photo-field">
+          <span>Фотографии товара</span>
+          <input id="adminImages" name="images" type="file" accept="image/*" multiple />
+          <label class="photo-picker" for="adminImages">
+            <span class="photo-picker-icon" aria-hidden="true">＋</span>
+            <span id="photoPickerText">Выбрать фотографии</span>
+            <small>До 10 фото, можно добавлять по несколько</small>
+          </label>
+          <p class="photo-selection" id="photoSelection">Фото ещё не выбраны</p>
+        </div>
+        <p class="admin-form-status" id="adminFormStatus" role="status"></p>
+        <div class="image-preview" id="imagePreview"></div>
+        <button class="admin-submit" type="submit">Добавить товар</button>
+      </form>
+    </aside>
+
+    <div class="toast" id="toast" role="status"></div>
+
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <script src="app.js"></script>
+  </body>
+</html>

@@ -41,7 +41,7 @@ button:focus-visible {
   min-height: var(--app-viewport-height, 100dvh);
   margin: 0;
   padding: max(12px, env(safe-area-inset-top)) 12px calc(86px + env(safe-area-inset-bottom));
-  background: rgba(5, 8, 15, .18);
+  background: transparent;
   overflow: clip;
 }
 
@@ -155,6 +155,9 @@ button:focus-visible {
   padding: 0 16px;
   overflow: hidden;
   isolation: isolate;
+  background-clip: padding-box;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
   scroll-snap-align: start;
   border: 1px solid rgba(174, 95, 255, .48);
   border-radius: 22px;
@@ -170,15 +173,22 @@ button:focus-visible {
 }
 .category.active {
   border-color: rgba(213, 166, 255, .95);
-  background:
-    linear-gradient(145deg, rgba(210, 158, 255, .38), rgba(139, 58, 255, .20)),
-    rgba(31, 10, 58, .94);
+  background: transparent;
   color: #fff;
   box-shadow:
     inset 0 1px 0 rgba(244, 224, 255, .24),
     0 0 10px rgba(193, 120, 255, .78),
     0 0 22px rgba(145, 64, 232, .48),
     0 6px 16px rgba(0,0,0,.20);
+}
+.category:focus,
+.category:focus-visible,
+.category:active {
+  outline: none;
+  box-shadow:
+    inset 0 1px 0 rgba(244, 224, 255, .24),
+    0 0 10px rgba(193, 120, 255, .78),
+    0 0 22px rgba(145, 64, 232, .48);
 }
 
 .products {
